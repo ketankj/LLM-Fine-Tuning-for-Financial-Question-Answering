@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "finqa-ft"
+version = "0.1.0"
+description = "QLoRA fine-tuning of a small open LLM for grounded financial question answering"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Ketan Madan Joshi" }]
+license = { text = "MIT" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "."]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["B008", "B905"]  # B008: FastAPI Depends() idiom; B905: zip strict= not needed (py3.10 compat)

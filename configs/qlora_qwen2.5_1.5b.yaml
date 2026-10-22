@@ -1,0 +1,45 @@
+# QLoRA fine-tuning config — fits a single 16 GB GPU (Colab T4 / A10G / L4).
+
+model:
+  base_model: Qwen/Qwen2.5-1.5B-Instruct
+  load_in_4bit: true
+  max_seq_length: 1024
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+
+data:
+  # Hugging Face dataset id (question / answer / context columns).
+  hf_dataset: virattt/financial-qa-10K
+  hf_split: train
+  # Set to a .jsonl path to train on local data instead of the Hub.
+  local_path: null
+  val_fraction: 0.05
+  test_fraction: 0.10
+  max_samples: null        # e.g. 2000 for a quick smoke run
+  seed: 42
+
+training:
+  output_dir: outputs/qwen2.5-1.5b-finqa-lora
+  num_train_epochs: 2
+  learning_rate: 2.0e-4
+  per_device_train_batch_size: 4
+  per_device_eval_batch_size: 4
+  gradient_accumulation_steps: 4
+  warmup_ratio: 0.03
+  lr_scheduler_type: cosine
+  weight_decay: 0.0
+  logging_steps: 10
+  eval_steps: 100
+  save_steps: 100
+  save_total_limit: 2
+  gradient_checkpointing: true
+  report_to: none          # set to "wandb" or "tensorboard" to track runs
+
+evaluation:
+  max_new_tokens: 128
+  num_samples: 200         # test-set rows scored per run (null = all)
+  numeric_rel_tol: 0.01    # 1% tolerance for numeric answers
